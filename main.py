@@ -46,7 +46,12 @@ async def startup_event():
 # --------------------------
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse("home.html", {"request": request})
+    context = {
+        "request": request,  # MUST include request
+        "bot_name": "CLN Bot",
+        "status": "Online"
+    }
+    return templates.TemplateResponse("home.html", context)
 
 @app.get("/login")
 async def login():
