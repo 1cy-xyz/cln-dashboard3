@@ -11,8 +11,8 @@ from discord.ext import commands
 # Environment Variables
 # --------------------------
 DISCORD_CLIENT_ID = int(os.environ.get("DISCORD_CLIENT_ID"))
-DISCORD_CLIENT_SECRET = os.environ.get("DISCORD_CLIENT_SECRET"))
-DISCORD_REDIRECT_URI = os.environ.get("DISCORD_REDIRECT_URI"))
+DISCORD_CLIENT_SECRET = os.environ.get("DISCORD_CLIENT_SECRET")
+DISCORD_REDIRECT_URI = os.environ.get("DISCORD_REDIRECT_URI")
 BOT_OWNER_IDS = os.environ.get("BOT_OWNER_IDS", "").split(",")  # comma-separated IDs
 SESSION_SECRET = os.environ.get("SESSION_SECRET", "supersecret")
 
