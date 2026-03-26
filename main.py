@@ -1,15 +1,16 @@
-from fastapi import FastAPI, Request, Depends
+import os
+import asyncio
+from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
-import os
 import discord
 from discord.ext import commands
 
 # --------------------------
 # Environment Variables
 # --------------------------
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 DISCORD_CLIENT_ID = int(os.environ.get("DISCORD_CLIENT_ID"))
 DISCORD_CLIENT_SECRET = os.environ.get("DISCORD_CLIENT_SECRET")
 DISCORD_REDIRECT_URI = os.environ.get("DISCORD_REDIRECT_URI")
@@ -30,9 +31,15 @@ intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+# --------------------------
+# Background Bot Startup
+# --------------------------
 @app.on_event("startup")
 async def startup_event():
-    await bot.start(os.environ.get("BOT_TOKEN"))
+    if BOT_TOKEN:
+        asyncio.create_task(bot.start(BOT_TOKEN))
+    else:
+        print("⚠️ BOT_TOKEN not set! Bot will not start.")
 
 # --------------------------
 # Public Routes
@@ -41,9 +48,6 @@ async def startup_event():
 async def home(request: Request):
     return templates.TemplateResponse("home.html", {"request": request})
 
-# --------------------------
-# OAuth2 Login
-# --------------------------
 @app.get("/login")
 async def login():
     discord_oauth = (
@@ -54,17 +58,11 @@ async def login():
     )
     return RedirectResponse(discord_oauth)
 
-# --------------------------
-# Callback (Discord OAuth2)
-# --------------------------
 @app.get("/callback")
 async def callback(request: Request, code: str):
     # Placeholder for OAuth2 token exchange & user session setup
     return RedirectResponse("/dashboard")
 
-# --------------------------
-# Dashboard
-# --------------------------
 @app.get("/dashboard", response_class=HTMLResponse)
 async def dashboard(request: Request):
     # Placeholder: show servers owned by the user
